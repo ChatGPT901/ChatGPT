@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -14,8 +14,21 @@
       height: 100vh;
       margin: 0;
     }
-    h1 {
+    header {
+      width: 800px;
       padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #newChat {
+      font-size: 14px;
+      padding: 6px 12px;
+      background: #10a37f;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
     }
     #chat {
       width: 800px;
@@ -63,7 +76,10 @@
   </style>
 </head>
 <body>
-  <h1>Admin ChatGPT Control</h1>
+  <header>
+    <h2>Admin Chat</h2>
+    <button id="newChat">New Chat</button>
+  </header>
   <div id="chat"></div>
   <footer>
     <textarea id="input" placeholder="Reply as ChatGPT..."></textarea>
@@ -74,6 +90,7 @@
     const chat = document.getElementById('chat');
     const input = document.getElementById('input');
     const send = document.getElementById('send');
+    const newChat = document.getElementById('newChat');
 
     function addMessage(text, sender) {
       const msg = document.createElement('div');
@@ -99,6 +116,11 @@
       loadMessages();
     };
 
+    newChat.onclick = () => {
+      localStorage.removeItem('chat-messages');
+      chat.innerHTML = '';
+    };
+
     window.addEventListener('storage', (e) => {
       if (e.key === 'chat-messages') loadMessages();
     });
@@ -107,3 +129,4 @@
   </script>
 </body>
 </html>
+
