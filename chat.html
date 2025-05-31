@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChatGPT</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #343541;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    header {
+      background: #202123;
+      width: 800px;
+      padding: 20px;
+      font-size: 28px;
+      text-align: center;
+    }
+    main {
+      flex: 1;
+      width: 800px;
+      background: #444654;
+      padding: 20px;
+      margin: 10px 0;
+      overflow-y: auto;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      font-size: 16px;
+    }
+    .user { align-self: flex-end; background: #10a37f; }
+    .bot { align-self: flex-start; background: #3e3f4b; }
+    footer {
+      width: 800px;
+      padding: 10px;
+      background: #202123;
+      display: flex;
+    }
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      background: #555764;
+      color: white;
+      border: none;
+      resize: none;
+    }
+    button {
+      background: #10a37f;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>ChatGPT</header>
+  <main id="chat"></main>
+  <footer>
+    <textarea id="input" placeholder="Send a message..."></textarea>
+    <button id="send">Send</button>
+  </footer>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const send = document.getElementById('send');
+
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Send user message
+    send.onclick = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      saveMessage('user', text);
+      input.value = '';
+    };
+
+    function saveMessage(sender, text) {
+      const messages = JSON.parse(localStorage.getItem('chat-messages') || '[]');
+      messages.push({ sender, text });
+      localStorage.setItem('chat-messages', JSON.stringify(messages));
+    }
+
+    function loadMessages() {
+      const messages = JSON.parse(localStorage.getItem('chat-messages') || '[]');
+      chat.innerHTML = '';
+      messages.forEach(msg => addMessage(msg.text, msg.sender));
+    }
+
+    // Watch for replies from admin
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'chat-messages') {
+        loadMessages();
+      }
+    });
+
+    loadMessages();
+  </script>
+</body>
+</html>
