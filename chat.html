@@ -20,6 +20,18 @@
       padding: 20px;
       font-size: 28px;
       text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #newChat {
+      font-size: 14px;
+      padding: 6px 12px;
+      background: #10a37f;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
     }
     main {
       flex: 1;
@@ -70,7 +82,10 @@
   </style>
 </head>
 <body>
-  <header>ChatGPT</header>
+  <header>
+    <div>ChatGPT</div>
+    <button id="newChat">New Chat</button>
+  </header>
   <main id="chat"></main>
   <footer>
     <textarea id="input" placeholder="Send a message..."></textarea>
@@ -81,6 +96,7 @@
     const chat = document.getElementById('chat');
     const input = document.getElementById('input');
     const send = document.getElementById('send');
+    const newChat = document.getElementById('newChat');
 
     function addMessage(text, sender) {
       const msg = document.createElement('div');
@@ -89,15 +105,6 @@
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
     }
-
-    // Send user message
-    send.onclick = () => {
-      const text = input.value.trim();
-      if (!text) return;
-      addMessage(text, 'user');
-      saveMessage('user', text);
-      input.value = '';
-    };
 
     function saveMessage(sender, text) {
       const messages = JSON.parse(localStorage.getItem('chat-messages') || '[]');
@@ -111,7 +118,19 @@
       messages.forEach(msg => addMessage(msg.text, msg.sender));
     }
 
-    // Watch for replies from admin
+    send.onclick = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      saveMessage('user', text);
+      input.value = '';
+    };
+
+    newChat.onclick = () => {
+      localStorage.removeItem('chat-messages');
+      chat.innerHTML = '';
+    };
+
     window.addEventListener('storage', (e) => {
       if (e.key === 'chat-messages') {
         loadMessages();
