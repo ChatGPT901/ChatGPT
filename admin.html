@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      padding: 20px;
+    }
+    #chat {
+      width: 800px;
+      flex: 1;
+      overflow-y: auto;
+      background: #2c2c2c;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      max-width: 70%;
+      margin-bottom: 12px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    .user { align-self: flex-end; background: #10a37f; }
+    .bot { align-self: flex-start; background: #3e3f4b; }
+    footer {
+      display: flex;
+      width: 800px;
+      padding: 10px;
+    }
+    textarea {
+      flex: 1;
+      background: #444;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+    button {
+      background: #10a37f;
+      color: white;
+      border: none;
+      margin-left: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin ChatGPT Control</h1>
+  <div id="chat"></div>
+  <footer>
+    <textarea id="input" placeholder="Reply as ChatGPT..."></textarea>
+    <button id="send">Send Reply</button>
+  </footer>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+    const send = document.getElementById('send');
+
+    function addMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.textContent = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function loadMessages() {
+      const messages = JSON.parse(localStorage.getItem('chat-messages') || '[]');
+      chat.innerHTML = '';
+      messages.forEach(msg => addMessage(msg.text, msg.sender));
+    }
+
+    send.onclick = () => {
+      const text = input.value.trim();
+      if (!text) return;
+      const messages = JSON.parse(localStorage.getItem('chat-messages') || '[]');
+      messages.push({ sender: 'bot', text });
+      localStorage.setItem('chat-messages', JSON.stringify(messages));
+      input.value = '';
+      loadMessages();
+    };
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'chat-messages') loadMessages();
+    });
+
+    loadMessages();
+  </script>
+</body>
+</html>
